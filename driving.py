@@ -34,6 +34,11 @@ def stop():
     M1B.duty_u16(0)
     M2B.duty_u16(0)
 
+'''Stops robot for t seconds'''
+def stop_time(t):
+    stop()
+    time.sleep(t)
+
 '''Basic run function, accepting PWM values for both
 motors. Negative values are read as backwards.
 Functions accounts for specified BIAS'''
@@ -57,15 +62,15 @@ def run(M1, M2):
 
 '''Runs run function for t time'''
 def run_time(M1, M2, t):
-    print(f"M1: {M1}, M2: {M2}")
     run(M1, M2)
     time.sleep(t)
 
-'''Accelerates gradually over t seconds, reducing
-slipping of the wheels from sudden changes in speed
-Defaults to 10 slices across .5 seconds.'''
-def gradually_accelerate(M1vf, M2vf, iterations = 10, t = 0.5):
-    
+'''Accelerates gradually over acceleration_time seconds, reducing
+slipping of the wheels from sudden changes in speed, then running at
+final speed for the remainder of the total_time.
+Defaults to 10 slices across .5 seconds, accelerating for 0.1 seconds.'''
+def gradually_accelerate(M1vf, M2vf, iterations = 10, acceleration_time = 0.1, total_time = 1):
+    print(total_time)
     '''Reads initial PWM value of each motor'''
     '''Left motor'''
     if M2A.duty_u16() > 0:
@@ -85,7 +90,10 @@ def gradually_accelerate(M1vf, M2vf, iterations = 10, t = 0.5):
     
     '''Increments speed for i iterations, gradually changing to vf'''
     for i in range(iterations):
-        run_time(M1vi+M1increment*i, M2vi+M2increment*i, t / iterations)
+        run_time(M1vi+M1increment*i, M2vi+M2increment*i, acceleration_time / iterations)
+
+    '''Runs at final speed for remaining time'''    
+    run_time(M1vf, M2vf, total_time - acceleration_time)
 
 '''Converts a specified speed (cm/s) to PWM value from 0 to 0xffff
 values were determined by modelling robot speed against PWM values'''
@@ -94,24 +102,20 @@ def speedToPWM(speed):
     '''Calculates PWM value'''
     coefficient = 941
     constant = 12617
-    if (speed > 0):
-        pwm = coefficient * speed + constant
-    elif (speed < 0):
-        pwm = -(coefficient * abs(speed) + constant)
-    else:
-        pwm = 0
-    '''Prevents speed exceeding max PWM value'''
-    if (pwm > MAX):
-        return MAX
-    elif (pwm < -MAX):
-        return -MAX
 
-    return pwm
+    if (speed == 0):
+        return 0
+    
+    abs_PWM = coefficient * abs(speed) + constant
+    abs_PWM = min(abs_PWM, MAX) #Ensures PWM does not exceed MAX
+    if (speed > 0):
+        return abs_PWM
+    else:
+        return -abs_PWM
 
 '''Drives robot at specified linear_velocity (cm/s)
 and specified angular_velocity (rad/s) for t seconds'''
-def drive(linear_velocity, angular_velocity, t=1):
-    print(f"Lv: {linear_velocity}, Av: {angular_velocity}, T: {t}")
+def drive(linear_velocity, angular_velocity, acceleration_time=.1, total_time = 0.5):
     '''Diameter between robot wheels, relevant for angular_velocity'''
     length = 13
     
@@ -125,6 +129,5 @@ def drive(linear_velocity, angular_velocity, t=1):
     converting from cm/s to PWM values using speedToPWM'''
     right_pwm = speedToPWM(right_velocity)
     left_pwm = speedToPWM(left_velocity)
-    print(f"R-PWM: {right_pwm}, L-PWM: {left_pwm}")
-    gradually_accelerate(right_pwm, left_pwm, 10, t)
+    gradually_accelerate(right_pwm, left_pwm, 10, acceleration_time, total_time)
 
