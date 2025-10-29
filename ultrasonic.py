@@ -55,7 +55,7 @@ note_to_freq = {"C": 261, "C#": 277, "D": 294,
                 "A": 440, "A#": 466, "B": 494,
                 "R": -1}
 
-def sing(tune=my_way.Song().getSong(), beat=.8, volume=250):
+def sing(tune=my_way.Songs().get_my_way_lead(), beat=.8, volume=1000):
 
     for note in tune:
         buzzer.duty_u16(volume)

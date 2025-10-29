@@ -57,6 +57,7 @@ def run(M1, M2):
 
 '''Runs run function for t time'''
 def run_time(M1, M2, t):
+    print(f"M1: {M1}, M2: {M2}")
     run(M1, M2)
     time.sleep(t)
 
@@ -81,7 +82,7 @@ def gradually_accelerate(M1vf, M2vf, iterations = 10, t = 0.5):
     to reach vf'''
     M2increment = (M2vf - M2vi) // iterations
     M1increment = (M1vf - M1vi) // iterations
-
+    
     '''Increments speed for i iterations, gradually changing to vf'''
     for i in range(iterations):
         run_time(M1vi+M1increment*i, M2vi+M2increment*i, t / iterations)
@@ -95,9 +96,10 @@ def speedToPWM(speed):
     constant = 12617
     if (speed > 0):
         pwm = coefficient * speed + constant
-    else:
+    elif (speed < 0):
         pwm = -(coefficient * abs(speed) + constant)
-    
+    else:
+        pwm = 0
     '''Prevents speed exceeding max PWM value'''
     if (pwm > MAX):
         return MAX
@@ -109,7 +111,7 @@ def speedToPWM(speed):
 '''Drives robot at specified linear_velocity (cm/s)
 and specified angular_velocity (rad/s) for t seconds'''
 def drive(linear_velocity, angular_velocity, t=1):
-
+    print(f"Lv: {linear_velocity}, Av: {angular_velocity}, T: {t}")
     '''Diameter between robot wheels, relevant for angular_velocity'''
     length = 13
     
@@ -121,5 +123,8 @@ def drive(linear_velocity, angular_velocity, t=1):
     
     '''Calls gradually accelerate to run motors at specified velocity,
     converting from cm/s to PWM values using speedToPWM'''
-    gradually_accelerate(speedToPWM(right_velocity), speedToPWM(left_velocity), t)
+    right_pwm = speedToPWM(right_velocity)
+    left_pwm = speedToPWM(left_velocity)
+    print(f"R-PWM: {right_pwm}, L-PWM: {left_pwm}")
+    gradually_accelerate(right_pwm, left_pwm, 10, t)
 
