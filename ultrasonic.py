@@ -1,6 +1,7 @@
 import machine
 import neopixel
 import time
+import my_way
 
 '''Sets up neopixel pins and buzzer'''
 NEO_PIN = 18
@@ -52,60 +53,22 @@ note_to_freq = {"C": 261, "C#": 277, "D": 294,
                 "D#": 311, "E": 330, "F": 349, 
                 "F#": 370, "G": 392, "G#": 415, 
                 "A": 440, "A#": 466, "B": 494,
-                "R": 0}
-my_way = [
-        ("A", -1, 1),
-        ("F#", 0, 1.5),
-        ("R", 0, .75),
-        ("A", -1, .25),
-        ("F#", 0, .75),
-        ("A", -1, .25),
-        ("F#", 0, 2),
-        ("R", 0, .75),
-        ("A", -1, .25),
-        ("F#", 0, .25),
-        ("E", 0, .75),
-        ("F#", 0, 2),
-        ("R", 0, .75),
-        ("A", -1, .25),
-        ("F#", 0, .25),
-        ("E", 0, .833),
-        ("E", 0, .333),
-        ("D#", 0, 1.333),
-        ("R", 0, 1.5),
-        ("B", -1, 1),
-        ("G", 0, 1.5),
-        ("R", 0, .5),
-        ("B", -1, .833),
-        ("G", 0, .333),
-        ("F#", 0, .333),
-        ("G", 0, 2),
-        ("R", 0, .25),
-        ("B", -1, .75),
-        ("G", 0, .5),
-        ("F#", 0, .5),
-        ("G", 0, 2),
-        ("R", 0, .75),
-        ("A", -1, .25),
-        ("A", 0, .25),
-        ("E", 0, .75),
-        ("G", 0, .5),
-        ("F#", 0, 1.5)
-        ]
+                "R": -1}
 
-
-def sing(tune=my_way, beat=.8):
-
-    buzzer.duty_u16(20_000)
+def sing(tune=my_way.Song().getSong(), beat=.8, volume=250):
 
     for note in tune:
+        buzzer.duty_u16(volume)
         pitch = note_to_freq[note[0]]
         octave_offset = note[1]
         duration = note[2]
-
-        buzzer.freq(pitch * pow(2, octave_offset))
-        time.sleep(duration*beat-.05)
-        buzzer.freq(0)
+        if (pitch > 0):
+            buzzer.freq(int(pitch * pow(2, octave_offset)))
+            time.sleep(duration*beat-.05)
+        else:
+            buzzer.duty_u16(0)
+            time.sleep(duration*beat-.05)
+        buzzer.duty_u16(0)
         time.sleep(.05)
 
 

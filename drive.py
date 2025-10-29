@@ -96,12 +96,12 @@ def speedToPWM(speed):
     if (speed > 0):
         pwm = coefficient * speed + constant
     else:
-        -pwm = coefficient * abs(speed) + constant
+        pwm = -(coefficient * abs(speed) + constant)
     
     '''Prevents speed exceeding max PWM value'''
     if (pwm > MAX):
         return MAX
-    else if (pwm < -MAX):
+    elif (pwm < -MAX):
         return -MAX
 
     return pwm
@@ -117,10 +117,9 @@ def drive(linear_velocity, angular_velocity, t=1):
         V_total = (Vl + Vr) / 2
         w = (Vr - Vl) / L'''
     right_velocity = linear_velocity + (angular_velocity*length) / 2
-    left_veloctiy = 2*linear_velocity - right_velocity 
+    left_velocity = 2*linear_velocity - right_velocity 
     
     '''Calls gradually accelerate to run motors at specified velocity,
     converting from cm/s to PWM values using speedToPWM'''
     gradually_accelerate(speedToPWM(right_velocity), speedToPWM(left_velocity), t)
-
 
