@@ -2,7 +2,7 @@ import machine
 import neopixel
 import time
 import my_way
-
+import songs
 
 class Ultrasound():
     def __init__(self, trigger, echo): 
@@ -68,7 +68,7 @@ class Ultrasound():
         # return distance
         return timepassed*.034 / 2
     
-    def sing(self, tune=my_way.Songs().get_my_way_lead(), beat=.8, volume=500):
+    def sing(self, tune=songs.Songs().get_my_way_lead(), beat=.8, volume=500):
 
         for note in tune:
             self.buzzer.duty_u16(volume)
@@ -108,4 +108,3 @@ class Ultrasound():
                 self.pixels.fill(dct["rgb"])
                 self.pixels.write()
                 return
-

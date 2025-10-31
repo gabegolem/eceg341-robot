@@ -120,11 +120,33 @@ class Songs():
             ("A", 0, .5),
             ("E", 1, .5),
             ("A", 0, .5),
-             ] 
+             ]
+
+        self.boot_theme = [
+            ("R", 0, .5),
+            ("B", 0, .5),
+            ("G", 1, .5),
+            ("F#", 1, .5),
+            ("E", 1, 1),
+            ("R", 0, .5),
+            ("D", 1, .5),
+            ("E", 1, .75),
+            ("G", 1, .25),
+            ("E", 1, .5),
+            ("D", 1, .5),
+            ("B", 0, 2),
+            ("B", 0, 1),
+            ("D", 1, 1),
+            ("E", 1, 1)
+            ]
+
     def get_my_way_lead(self):
         return self.my_way_lead
 
     def get_my_way_backup(self):
         return self.my_way_backup
+
+    def get_boot_theme(self):
+        return self.boot_theme
 
 
