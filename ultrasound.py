@@ -3,12 +3,13 @@ import neopixel
 import time
 import my_way
 import songs
+import _thread
 
 class Ultrasound():
     def __init__(self, trigger, echo): 
         '''Sets up neopixel pins and self.buzzer'''
         self.NEO_PIN = 18
-        self.NUM_PIXELS = 1
+        self.NUM_PIXELS =2
         self.pixels = neopixel.NeoPixel(machine.Pin(self.NEO_PIN), self.NUM_PIXELS)
         self.buzzer = machine.PWM(machine.Pin(22))
         self.buzzer.freq(4400)
@@ -68,8 +69,22 @@ class Ultrasound():
         # return distance
         return timepassed*.034 / 2
     
-    def sing(self, tune=songs.Songs().get_my_way_lead(), beat=.8, volume=500):
-
+    def sing(self, tune, beat, volume):
+        for note in tune:
+            self.buzzer.duty_u16(volume)
+            pitch = self.note_to_freq[note[0]]
+            octave_offset = note[1]
+            duration = note[2]
+            if (pitch > 0):
+                self.buzzer.freq(int(pitch * pow(2, octave_offset)))
+                time.sleep(duration*beat-.05)
+            else:
+                self.buzzer.duty_u16(0)
+                time.sleep(duration*beat-.05)
+            self.buzzer.duty_u16(0)
+            time.sleep(.05)
+    
+    def sing_and_light(self, tune, beat, volume): 
         for note in tune:
             self.buzzer.duty_u16(volume)
             pitch = self.note_to_freq[note[0]]
@@ -108,3 +123,37 @@ class Ultrasound():
                 self.pixels.fill(dct["rgb"])
                 self.pixels.write()
                 return
+
+    def rainbow(self):
+        maximum = 20
+        minimum = 1
+        color = 0
+        r = maximum
+        g = 0
+        b = 0
+        while True:
+            if (color == 0):
+                if (g < maximum):
+                    g += 1
+                elif (r > minimum):
+                    r -= 1
+                else:
+                    color = 1
+            elif (color == 1):
+                if (b < maximum):
+                    b += 1
+                elif (g > minimum):
+                    g -= 1
+                else:
+                    color = 2
+            else:
+                if (r < maximum):
+                    r += 1
+                elif (b > minimum):
+                    b -= 1
+                else:
+                    color = 0
+                    
+            self.pixels.fill((r, g, b))
+            self.pixels.write()
+            time.sleep(.05)

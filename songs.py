@@ -1,7 +1,8 @@
+
+
 class Songs():
     def __init__(self):
         self.my_way_lead = [
-            ("R", 0, 7.5),    
             ("A", -1, 1),
             ("F#", 0, 1.5),
             ("R", 0, .75),
@@ -149,7 +150,7 @@ class Songs():
             ("E", 0, .5),
             ("R", 0, .5),
             ("E", 0, .5),
-            ("C", 0, .25)
+            ("C", 0, .75)
             ]
 
     def get_my_way_lead(self):
