@@ -3,19 +3,36 @@ import ultrasound
 import testing
 import _thread
 import songs
+import linereader
+import time
 
 print("Running")
 
 
-songs = songs.Songs()
-ultrasound = ultrasound.Ultrasound(trigger = machine.Pin(28, machine.Pin.OUT), echo = machine.Pin(7, machine.Pin.IN))
-driving = driving.Driving()
-tests = testing.Tests()
+tunes = songs.Songs()
+ultrasounder = ultrasound.Ultrasound(trigger = machine.Pin(28, machine.Pin.OUT), echo = machine.Pin(7, machine.Pin.IN))
+driver = driving.Driving()
+tester = testing.Testing()
+follower = linereader.LineReader()
 
-ultrasound.sing(songs.get_boot_theme(), beat = .6, volume = 1000)
+ultrasounder.sing(tunes.get_finish_theme(), beat = .3, volume = 1000)
 
-light_thread = _thread.start_new_thread(ultrasound.rainbow, tuple())
-#lead_thread = _thread.start_new_thread(ultrasound.sing, (songs.get_my_way_lead(), .8, 1000))
-#ultrasound.sing(tune=songs.get_my_way_lead(), beat=.8, volume=1000)
-ultrasound.sing(tune=songs.get_finish_theme(), beat=.3, volume=1000)
-#tests.test_driving()
+driver.curling(100)
+'''
+while True:
+    decay = follower.calculate_position(40, 15)
+    darkness = follower.getDarkness()
+    confidence = follower.getConfidence()
+    print(f"Measured decay time: {decay} us.")
+    print(f"Darkness: {darkness}")
+    print(f"Confidence: {confidence}")
+    time.sleep(.5)
+'''
+
+'''
+#light_thread = _thread.start_new_thread(ultrasounder.rainbow, tuple())
+lead_thread = _thread.start_new_thread(ultrasounder.sing, (tunes.get_my_way_lead(), .8, 1000))
+#ultrasounder.sing(tune=tunes.get_my_way_lead(), beat=.8, volume=1000)
+#ultrasounder.sing(tune=tunes.get_finish_theme(), beat=.3, volume=1000)
+tester.test_driving()
+'''

@@ -104,7 +104,7 @@ class Driving():
     def speedToPWM(self, speed):
 
         '''Calculates PWM value'''
-        coefficient = 1200
+        coefficient = 1000
         constant = 14000
 
         if (speed == 0):
@@ -117,9 +117,18 @@ class Driving():
         else:
             return -abs_PWM
 
+    '''Only accepts distances >= 11.43 cm'''
+    def distanceToTime(self, distance):
+
+        constant = 11.43 #distance covered during .5 second acceleration
+        coefficient = 5.08 #distance covered at max speed over .1 second
+        
+        time = 0.5 + (0.1 * (distance - constant)/coefficient)
+        return time
+
     '''Drives robot at specified linear_velocity (cm/s)
     and specified angular_velocity (rad/s) for t seconds'''
-    def drive(self, linear_velocity, angular_velocity, acceleration_time=.1, total_time = 0.5):
+    def drive_pwm(self, linear_velocity, angular_velocity, acceleration_time=.5, total_time = 0.5):
         '''Diameter between robot wheels, relevant for angular_velocity'''
         length = 13
         
@@ -135,3 +144,8 @@ class Driving():
         left_pwm = self.speedToPWM(left_velocity)
         self.gradually_accelerate(right_pwm, left_pwm, 10, acceleration_time, total_time)
 
+    '''Function optimized for driving straight for curling event'''
+
+    def curling(self, distance):
+        self.gradually_accelerate(self.MAX, self.MAX, 10, .5, self.distanceToTime(distance))
+        self.stop()

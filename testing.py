@@ -5,7 +5,7 @@ import machine
 import math
 import neopixel
 
-class Tests():
+class Testing():
     
     def __init__(self):
         self.TRIGGER_PIN = 28
@@ -15,13 +15,13 @@ class Tests():
         self.ultrasound = ultrasound.Ultrasound(trigger = machine.Pin(self.TRIGGER_PIN, machine.Pin.OUT), echo = machine.Pin(self.ECHO_PIN, machine.Pin.IN))
 
     def test_driving(self):
-        
+       
         # TEST 1 -- straight!
         # 20 cm/s, 0 rad/s
         print("TEST 1")
-        self.driving.drive(20, 0)
+        self.driving.drive(66, 0, acceleration_time = 3, total_time=3)
         # stop_time, drive should have gone 10 cm forward. Check! I got about 12 cm.
-        self.driving.stop_time(1)
+        self.driving.stop_time(10)
 
 
         # TEST 2 -- reverse
@@ -60,4 +60,13 @@ class Tests():
             print(f"Distance = {distance:.2f} cm")
             self.ultrasound.distance_warning(distance)
             time.sleep(0.05)
+    
+    def graph_driving(self):
+        MAX = 0xffff
+        for i in range(5, 30, 1):
+            self.driving.gradually_accelerate(MAX, MAX, 10, 0.5, i/10)
+            self.driving.stop_time(8)
 
+    def curling(self, distance):
+        self.gradually_accelerate(self.MAX, self.MAX, 10, .5, distanceToTime(distance))
+        self.stop()
