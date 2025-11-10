@@ -1,7 +1,7 @@
 import driving
 import ultrasound
 import testing
-import _thread
+import asyncio
 import songs
 import linereader
 import time
@@ -17,7 +17,33 @@ follower = linereader.LineReader()
 
 ultrasounder.sing(tunes.get_finish_theme(), beat = .3, volume = 1000)
 
-driver.curling(100)
+async def blink(led, period_ms):
+    while True:
+        led.on()
+        await asyncio.sleep_ms(500)
+        led.off()
+        await asyncio.sleep_ms(period_ms)
+
+async def main(led1, led2):
+    asyncio.create_task(blink(led1, 1000))
+    asyncio.create_task(blink(led2, 250))
+    asyncio.create_task(printy())
+    asyncio.create_task(singy())
+    await asyncio.sleep_ms(10_000)
+
+async def singy():
+    ultrasounder.sing(tunes.get_my_way_lead(), beat = .6, volume = 1000)
+
+async def printy():
+    while True:
+        print("GAMING OR UNCLEEEEEEE")
+        await asyncio.sleep_ms(100)
+
+# Running on a pyboard
+asyncio.run(main(machine.Pin(26), machine.Pin(28)))
+
+# Running on a generic board
+
 '''
 while True:
     decay = follower.calculate_position(40, 15)
