@@ -70,7 +70,7 @@ class Ultrasound():
         # return distance
         return timepassed*.034 / 2
     
-    async def sing(self, tune, beat, volume):
+    def sing(self, tune, beat, volume):
         for note in tune:
             self.buzzer.duty_u16(volume)
             pitch = self.note_to_freq[note[0]]
@@ -78,12 +78,12 @@ class Ultrasound():
             duration = note[2]
             if (pitch > 0):
                 self.buzzer.freq(int(pitch * pow(2, octave_offset)))
-                asyncio.sleep(duration*beat-.05)
+                time.sleep(duration*beat-.05)
             else:
                 self.buzzer.duty_u16(0)
-                asyncio.sleep(duration*beat-.05)
+                time.sleep(duration*beat-.05)
             self.buzzer.duty_u16(0)
-            asyncio.sleep(.05)
+            time.sleep(.05)
     
     def sing_and_light(self, tune, beat, volume): 
         for note in tune:

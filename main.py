@@ -4,6 +4,7 @@ import testing
 import asyncio
 import songs
 import linereader
+import linefollower
 import time
 
 print("Running")
@@ -13,10 +14,16 @@ tunes = songs.Songs()
 ultrasounder = ultrasound.Ultrasound(trigger = machine.Pin(28, machine.Pin.OUT), echo = machine.Pin(7, machine.Pin.IN))
 driver = driving.Driving()
 tester = testing.Testing()
-follower = linereader.LineReader()
+reader = linereader.LineReader()
+follower = linefollower.LineFollower(driver, reader)
 
 ultrasounder.sing(tunes.get_finish_theme(), beat = .3, volume = 1000)
 
+tester.curling(225)
+
+follower.follow_line()
+
+'''
 async def blink(led, period_ms):
     while True:
         led.on()
@@ -43,6 +50,7 @@ async def printy():
 asyncio.run(main(machine.Pin(26), machine.Pin(28)))
 
 # Running on a generic board
+'''
 
 '''
 while True:

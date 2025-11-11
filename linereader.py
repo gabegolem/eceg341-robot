@@ -7,7 +7,7 @@ class LineReader():
     def __init__(self):
         # 6 reflectance sensors arranged left-to-right
         self.pins = [Pin(i) for i in range(5, -1, -1)]  # Pins 5 → 0
-        self.SAMPLE_COUNT = 40      # Number of samples per reading
+        self.SAMPLE_COUNT = 10      # Number of samples per reading
         self.SAMPLE_DELAY_US = 15   # Delay between samples (microseconds)
         
         # Metrics computed from readings
@@ -57,7 +57,7 @@ class LineReader():
         self.confidence = 1 - math.exp(-0.001 * variance)  # higher variance → higher confidence
 
         if total_reflectance == 0:
-            return float("inf")  # Avoid divide-by-zero
+            return .00001  # Avoid divide-by-zero
 
         normalized = [r / total_reflectance for r in adjusted_readings]
 
@@ -65,6 +65,8 @@ class LineReader():
         weighted_sum = sum(p * n for p, n in zip(sensor_positions, normalized))
         self.offset = weighted_sum
 
+        print(self.offset)
+        
         return self.offset
     
     def getDarkness(self):
@@ -72,3 +74,9 @@ class LineReader():
     
     def getConfidence(self):
         return self.confidence
+
+    def getSampleCount(self):
+        return self.SAMPLE_COUNT
+
+    def getSampleDelay(self):
+        return self.SAMPLE_DELAY_US

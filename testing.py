@@ -68,5 +68,4 @@ class Testing():
             self.driving.stop_time(8)
 
     def curling(self, distance):
-        self.gradually_accelerate(self.MAX, self.MAX, 10, .5, distanceToTime(distance))
-        self.stop()
+        self.driving.curling(distance)
