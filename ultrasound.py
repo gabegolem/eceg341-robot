@@ -1,6 +1,7 @@
 import machine
 import neopixel
 import time
+import utime
 import my_way
 import songs
 import _thread
@@ -60,11 +61,23 @@ class Ultrasound():
         time.sleep_us(15)
         self.t.low()
 	 # wait for start of echo
+        timeout = 250
+        start_time = utime.ticks_ms()
         while self.e.value() == 0:
             signaloff = time.ticks_us()
+            end_time = utime.ticks_ms()
+            elapsed_time = utime.ticks_diff(end_time, start_time)
+            if elapsed_time > timeout:
+                return 1000
+
 	 # measure echo width
+        start_time = utime.ticks_ms()
         while self.e.value() == 1:
             signalon = time.ticks_us()
+            end_time = utime.ticks_ms()
+            elapsed_time = utime.ticks_diff(end_time, start_time)
+            if elapsed_time > timeout:
+                return 1000
         # compute width
         timepassed = signalon - signaloff
         # return distance

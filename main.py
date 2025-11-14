@@ -11,17 +11,17 @@ print("Running")
 
 
 tunes = songs.Songs()
-ultrasounder = ultrasound.Ultrasound(trigger = machine.Pin(28, machine.Pin.OUT), echo = machine.Pin(7, machine.Pin.IN))
-driver = driving.Driving()
+#ultrasounder = ultrasound.Ultrasound(trigger = machine.Pin(28, machine.Pin.OUT), echo = machine.Pin(7, machine.Pin.IN))
+#driver = driving.Driving()
 tester = testing.Testing()
-reader = linereader.LineReader()
-follower = linefollower.LineFollower(driver, reader)
+#reader = linereader.LineReader()
+#follower = linefollower.LineFollower(driver, reader)
 
-ultrasounder.sing(tunes.get_finish_theme(), beat = .3, volume = 1000)
+#ultrasounder.sing(tunes.get_finish_theme(), beat = .3, volume = 1000)
 
-tester.curling(225)
+tester.curling()
 
-follower.follow_line()
+#follower.follow_line()
 
 '''
 async def blink(led, period_ms):

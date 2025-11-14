@@ -11,8 +11,8 @@ class Testing():
         self.TRIGGER_PIN = 28
         self.ECHO_PIN = 7
 
-        self.driving = driving.Driving()
-        self.ultrasound = ultrasound.Ultrasound(trigger = machine.Pin(self.TRIGGER_PIN, machine.Pin.OUT), echo = machine.Pin(self.ECHO_PIN, machine.Pin.IN))
+        self.driver = driving.Driving()
+        self.ultrasounder = ultrasound.Ultrasound(trigger = machine.Pin(self.TRIGGER_PIN, machine.Pin.OUT), echo = machine.Pin(self.ECHO_PIN, machine.Pin.IN))
 
     def test_driving(self):
        
@@ -67,5 +67,25 @@ class Testing():
             self.driving.gradually_accelerate(MAX, MAX, 10, 0.5, i/10)
             self.driving.stop_time(8)
 
-    def curling(self, distance):
-        self.driving.curling(distance)
+    def curling(self):
+        MAX = 0xffff
+        distance = 0;
+        while (distance < 5):
+            distance = self.ultrasounder.measure()
+            print(distance)
+            time.sleep(.05)
+        self.driver.gradually_accelerate(MAX, MAX, 10, 5, 5)
+
+        distance = self.ultrasounder.measure()
+        print(distance)
+        print(distance > 45)
+        while (distance > 45):
+            print('0')
+            distance = self.ultrasounder.measure()
+            print('1')
+            print(distance)
+            time.sleep(.05)
+        self.driver.stop()
+
+
+
