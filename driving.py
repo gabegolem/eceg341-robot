@@ -7,7 +7,7 @@ class Driving():
     def __init__(self):
         '''-------------------Constants--------------------'''
         self.MAX = 0xffff #self.MAX VALUE of PWM duty is 65536
-        self.RIGHT_BIAS = 1 #Right wheel bias 
+        self.RIGHT_BIAS = .98 #Right wheel bias 
         self.LEFT_BIAS = .99 #Left wheel bias 
 
         '''-----------------Motor Settings-----------------'''
@@ -128,7 +128,7 @@ class Driving():
 
     '''Drives robot at specified linear_velocity (cm/s)
     and specified angular_velocity (rad/s) for t seconds'''
-    def drive_pwm(self, linear_velocity, angular_velocity, acceleration_time=.5, total_time = 0.5):
+    def drive_pwm(self, linear_velocity, angular_velocity, acceleration_time=1, total_time = 1):
         '''Diameter between robot wheels, relevant for angular_velocity'''
         length = 13
         

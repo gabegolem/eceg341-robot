@@ -171,3 +171,7 @@ class Ultrasound():
             self.pixels.fill((r, g, b))
             self.pixels.write()
             time.sleep(.05)
+
+    def clear_neopixel(self):
+        self.pixels.fill((0,0,0))
+        self.pixels.write()

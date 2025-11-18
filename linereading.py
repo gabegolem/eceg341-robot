@@ -2,7 +2,7 @@ from machine import Pin
 import time
 import math
 
-class LineReader():
+class LineReading():
 
     def __init__(self):
         # 6 reflectance sensors arranged left-to-right

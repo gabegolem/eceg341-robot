@@ -3,26 +3,29 @@ import ultrasound
 import testing
 import asyncio
 import songs
-import linereader
-import linefollower
+import linereading
+import linefollowing
 import time
 
 print("Running")
 
 
 tunes = songs.Songs()
-#ultrasounder = ultrasound.Ultrasound(trigger = machine.Pin(28, machine.Pin.OUT), echo = machine.Pin(7, machine.Pin.IN))
+ultrasounder = ultrasound.Ultrasound(trigger = machine.Pin(28, machine.Pin.OUT), echo = machine.Pin(7, machine.Pin.IN))
 #driver = driving.Driving()
 tester = testing.Testing()
 #reader = linereader.LineReader()
 #follower = linefollower.LineFollower(driver, reader)
 
-#ultrasounder.sing(tunes.get_finish_theme(), beat = .3, volume = 1000)
+ultrasounder.sing(tunes.get_finish_theme(), beat = .3, volume = 1000)
 
-tester.curling()
-
-#follower.follow_line()
-
+#tester.breakdance()
+tester.curl()
+#tester.curl(distance_max = 15, mult=1, t=.5) '''1-m dash'''
+#tester.slalom()
+#tester.marathon()
+#tester.orienteering()
+#tester.luge()
 '''
 async def blink(led, period_ms):
     while True:
