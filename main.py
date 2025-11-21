@@ -20,29 +20,27 @@ tester = testing.Testing()
 ultrasounder.sing(tunes.get_finish_theme(), beat = .3, volume = 1000)
 
 #tester.breakdance()
-tester.curl()
-#tester.curl(distance_max = 15, mult=1, t=.5) '''1-m dash'''
+#tester.curl()
+#tester.dash(distance_max = 15, mult=1, t=.5) '''1-m dash'''
 #tester.slalom()
 #tester.marathon()
 #tester.orienteering()
 #tester.luge()
+
+def main(test_id):
+    if (test_id == 0):
+        asyncio.run(tester.breakdance())
+    elif (test_id == 1):
+        asyncio.run(tester.curl())
+    elif (test_id == 2):
+        asyncio.run(tester.dash())
+    else:
+        print(f"No test for id {test_id}")
+main(0)
+
 '''
-async def blink(led, period_ms):
-    while True:
-        led.on()
-        await asyncio.sleep_ms(500)
-        led.off()
-        await asyncio.sleep_ms(period_ms)
-
-async def main(led1, led2):
-    asyncio.create_task(blink(led1, 1000))
-    asyncio.create_task(blink(led2, 250))
-    asyncio.create_task(printy())
-    asyncio.create_task(singy())
-    await asyncio.sleep_ms(10_000)
-
 async def singy():
-    ultrasounder.sing(tunes.get_my_way_lead(), beat = .6, volume = 1000)
+    ultrasounder.sing_async(tunes.get_my_way_lead(), beat = .6, volume = 1000)
 
 async def printy():
     while True:
@@ -50,11 +48,8 @@ async def printy():
         await asyncio.sleep_ms(100)
 
 # Running on a pyboard
-asyncio.run(main(machine.Pin(26), machine.Pin(28)))
-
-# Running on a generic board
+asyncio.run(main(1))
 '''
-
 '''
 while True:
     decay = follower.calculate_position(40, 15)

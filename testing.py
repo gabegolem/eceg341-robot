@@ -7,56 +7,20 @@ import neopixel
 import songs
 import linereading
 import linefollowing
+import asyncio
 
 class Testing():
     
     def __init__(self):
         self.TRIGGER_PIN = 28
         self.ECHO_PIN = 7
+        self.MAX = 0xffff
 
         self.driver = driving.Driving()
         self.ultrasounder = ultrasound.Ultrasound(trigger = machine.Pin(self.TRIGGER_PIN, machine.Pin.OUT), echo = machine.Pin(self.ECHO_PIN, machine.Pin.IN))
         self.singer = songs.Songs()
         self.linereader = linereading.LineReading()
         self.linefollower = linefollowing.LineFollowing(self.driver, self.linereader, self.ultrasounder)
-
-    def test_driving(self):
-       
-        # TEST 1 -- straight!
-        # 20 cm/s, 0 rad/s
-        print("TEST 1")
-        self.driver.drive_pwm(66, 0, acceleration_time = 3, total_time=3)
-        # stop_time, drive should have gone 10 cm forward. Check! I got about 12 cm.
-        self.driver.stop_time(1)
-
-
-        # TEST 2 -- reverse
-        # -20 cm/s, 0 rad/s 
-        print("TEST 2")
-        self.driver.drive_pwm(-20, 0)
-        # stop_time, drive should have gone 10 cm in reverse. Drive the M1B and M2B pins!
-        self.driver.stop_time(1)
-
-
-        # TEST 3 -- RIGHT
-        print("TEST 3")
-        self.driver.drive_pwm(20, math.radians(180))
-        # stop_time, drive should have turned about 90 degrees clockwise
-        self.driver.stop_time(1)
-
-
-        # TEST 4 -- LEFT
-        print("TEST 4")
-        self.driver.drive_pwm(20, -math.radians(180), .5, 1)
-        # stop_time, we should have turned about 180 degrees counter clockwise
-        self.driver.stop_time(1)
-
-
-        # TEST 5 -- ROTATE in PLACE
-        print("TEST 5")
-        self.driver.drive_pwm(0, math.radians(360), .1, 1)
-        # stop_time, drive should turn about 360 degrees clockwise
-        self.driver.stop_time(1)
 
 
     def test_ultrasound(self):
@@ -73,10 +37,12 @@ class Testing():
             self.driving.gradually_accelerate(MAX, MAX, 10, 0.5, i/10)
             self.driving.stop_time(8)
 
-    def curl(self, distance_max=40, mult=2/3, t=4):
+    async def curl(self, distance_max=40, mult=2/3, t=4):
         self.ultrasounder.clear_neopixel()
+        light_max = 70
+        
         MAX = 0xffff
-        distance = 0;
+        distance = 0
         while (distance < 5):
             distance = self.ultrasounder.measure()
             print(distance)
@@ -84,19 +50,38 @@ class Testing():
         self.driver.gradually_accelerate(MAX*mult, MAX*mult, 10, t, t)
 
         distance = self.ultrasounder.measure()
-        print(distance)
-        print(distance > distance_max)
+
         while (distance > distance_max):
             distance = self.ultrasounder.measure()
-            if (distance < 70 and distance > distance_max):
-                self.ultrasounder.rainbow()
+            if (distance < light_max and distance > distance_max):
+                asyncio.create_task(self.ultrasounder.rainbow())
+            asyncio.sleep(.05)
             time.sleep(.05)
         self.driver.stop()
 
-    def breakdance(self):
+    async def breakdance(self):
         self.ultrasounder.clear_neopixel()
-        self.test_driving()
-        self.ultrasounder.rainbow()
+        asyncio.create_task(self.driver.gradually_accelerate_async(self.MAX,self.MAX,10,10))
+        asyncio.create_task(self.ultrasounder.rainbow())
+        asyncio.create_task(self.ultrasounder.sing_async(self.singer.get_my_way_lead(), beat = .8, volume = 1000))
+        await asyncio.sleep(100)
+
+    async def dash():
+        
+        distance_max = 20
+
+        distance = 0
+        while (distance < 5):
+            distance = self.ultrasounder.measure()
+            time.sleep(.05)
+        self.driver.gradually_accelerate(self.MAX, self.MAX, 1, 1)
+
+        distance = ultrasounder.measure()
+
+        while(distance > distance_max):
+            distance = self.ultrasounder.measure()
+            time.sleep(.05)
+        self.driver.stop()
 
     def slalom(self):
         self.linefollower.follow_line()

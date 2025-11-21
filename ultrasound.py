@@ -53,6 +53,36 @@ class Ultrasound():
             "R": -1
             }
     
+    async def measure_async(self):
+	 # create trigger pulse
+        self.t.low()
+        await asyncio.sleep_us(2)
+        self.t.high()
+        await asyncio.sleep_us(15)
+        self.t.low()
+	 # wait for start of echo
+        timeout = 250
+        start_time = utime.ticks_ms()
+        while self.e.value() == 0:
+            signaloff = time.ticks_us()
+            end_time = utime.ticks_ms()
+            elapsed_time = utime.ticks_diff(end_time, start_time)
+            if elapsed_time > timeout:
+                return 1000
+
+	 # measure echo width
+        start_time = utime.ticks_ms()
+        while self.e.value() == 1:
+            signalon = time.ticks_us()
+            end_time = utime.ticks_ms()
+            elapsed_time = utime.ticks_diff(end_time, start_time)
+            if elapsed_time > timeout:
+                return 1000
+        # compute width
+        timepassed = signalon - signaloff
+        # return distance
+        return timepassed*.034 / 2
+    
     def measure(self):
 	 # create trigger pulse
         self.t.low()
@@ -82,7 +112,8 @@ class Ultrasound():
         timepassed = signalon - signaloff
         # return distance
         return timepassed*.034 / 2
-    
+
+
     def sing(self, tune, beat, volume):
         for note in tune:
             self.buzzer.duty_u16(volume)
@@ -98,7 +129,7 @@ class Ultrasound():
             self.buzzer.duty_u16(0)
             time.sleep(.05)
     
-    def sing_and_light(self, tune, beat, volume): 
+    async def sing_async(self, tune, beat, volume):
         for note in tune:
             self.buzzer.duty_u16(volume)
             pitch = self.note_to_freq[note[0]]
@@ -106,12 +137,12 @@ class Ultrasound():
             duration = note[2]
             if (pitch > 0):
                 self.buzzer.freq(int(pitch * pow(2, octave_offset)))
-                time.sleep(duration*beat-.05)
+                await asyncio.sleep(duration*beat-.05)
             else:
                 self.buzzer.duty_u16(0)
-                time.sleep(duration*beat-.05)
+                await asyncio.sleep(duration*beat-.05)
             self.buzzer.duty_u16(0)
-            time.sleep(.05)
+            await asyncio.sleep(.05)
 
     def distance_warning(self, distance):
         self.buzzer.duty_u16(1000)
@@ -138,7 +169,7 @@ class Ultrasound():
                 self.pixels.write()
                 return
 
-    def rainbow(self):
+    async def rainbow(self):
         maximum = 20
         minimum = 1
         color = 0
@@ -170,7 +201,7 @@ class Ultrasound():
                     
             self.pixels.fill((r, g, b))
             self.pixels.write()
-            time.sleep(.05)
+            await asyncio.sleep(.05)
 
     def clear_neopixel(self):
         self.pixels.fill((0,0,0))
