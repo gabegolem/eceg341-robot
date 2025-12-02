@@ -34,9 +34,18 @@ def main(test_id):
         asyncio.run(tester.curl())
     elif (test_id == 2):
         asyncio.run(tester.dash())
+    elif (test_id == 3):
+        tester.slalom()
+    elif (test_id == 4):
+        tester.marathon()
+    elif (test_id == 5):
+        tester.orienteering()
+    elif (test_id == 6):
+        print("LUGE")
+        tester.luge()
     else:
         print(f"No test for id {test_id}")
-main(0)
+main(2)
 
 '''
 async def singy():
