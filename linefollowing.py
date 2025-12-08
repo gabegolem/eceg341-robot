@@ -35,6 +35,9 @@ class LineFollowing:
         self.base_speed = 10
 
     def follow_line(self):
+
+        self.sharpness = 15
+
         while True:
             offset = self.sensor.calculate_position(
                 self.sensor.SAMPLE_COUNT,
@@ -66,7 +69,7 @@ class LineFollowing:
 
             # Move robot using combined linear + angular motion
             self.driver.drive_pwm(
-                linear_velocity=self.base_speed,
+                linear_velocity=self.base_speed/5,
                 angular_velocity=angular_velocity,
                 acceleration_time=0.05,
                 total_time=0.05
@@ -116,9 +119,53 @@ class LineFollowing:
             time.sleep(0.01)
 
             if (self.ultrasounder.measure() < 10):
-                self.driver.stop_time(100)
+                self.driver.stop()
+                break;
 
             end = time.time()
             if (end-start > 10):
-                self.driver.stop_time(100)
+                self.driver.stop()
+                break;
+
+    def follow_line_luge(self):
+
+        self.sharpness = 15
+
+        while True:
+
+            offset = self.sensor.calculate_position(
+                self.sensor.SAMPLE_COUNT,
+                self.sensor.SAMPLE_DELAY_US
+            )
+            '''
+            # Optional: skip updates if confidence is too low
+            if self.sensor.getConfidence() < 0.2:
+                print("TOO LOW")
+                self.driver.stop()
+                continue
+            '''
+            # PID computation
+            error = offset
+            self.integral += error
+            derivative = error - self.last_error
+            
+            correction = (
+                self.Kp * error +
+                self.Ki * self.integral +
+                self.Kd * derivative
+            )
+
+            self.last_error = error
+
+            # Convert correction to angular velocity
+            # Larger correction means sharper turn
+            angular_velocity = -correction / self.sharpness 
+
+            # Move robot using combined linear + angular motion
+            self.driver.drive_pwm(
+                linear_velocity=self.base_speed/10,
+                angular_velocity=angular_velocity,
+                acceleration_time=0.05,
+                total_time=0.05
+            )
 

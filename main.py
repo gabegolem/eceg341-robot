@@ -45,7 +45,7 @@ def main(test_id):
         tester.luge()
     else:
         print(f"No test for id {test_id}")
-main(2)
+main(1)
 
 '''
 async def singy():

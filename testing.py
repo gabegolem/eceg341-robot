@@ -54,17 +54,20 @@ class Testing():
         while (distance > distance_max):
             distance = self.ultrasounder.measure()
             if (distance < light_max and distance > distance_max):
-                asyncio.create_task(self.ultrasounder.rainbow())
+                self.ultrasounder.red()
             asyncio.sleep(.05)
             time.sleep(.05)
         self.driver.stop()
 
     async def breakdance(self):
         self.ultrasounder.clear_neopixel()
-        asyncio.create_task(self.driver.gradually_accelerate_async(self.MAX,self.MAX,10,10))
+        asyncio.create_task(self.driver.breakdance())
         asyncio.create_task(self.ultrasounder.rainbow())
-        asyncio.create_task(self.ultrasounder.sing_async(self.singer.get_my_way_lead(), beat = .8, volume = 1000))
-        await asyncio.sleep(100)
+        asyncio.create_task(self.ultrasounder.sing_async(self.singer.get_my_way_lead(), beat = .6, volume = 4000))
+        await asyncio.sleep(29)
+        self.driver.stop()
+        self.ultrasounder.clear_neopixel()
+        self.ultrasounder.sing_rest()
 
     async def dash():
         
@@ -88,9 +91,11 @@ class Testing():
 
     def marathon(self):
         self.linefollower.follow_no_crash()
+        self.ultrasounder.red()
+        self.ultrasounder.sing(self.singer.get_my_way_lead(), beat = .8, volume = 4000)
     
     def orienteering(self):
-        self.linefollower.follow_no_crash()
+        self.linefollower.follow_line()
         self.ultrasounder.rainbow()
 
     def luge(self):

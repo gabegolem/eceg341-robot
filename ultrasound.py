@@ -128,6 +128,9 @@ class Ultrasound():
                 time.sleep(duration*beat-.05)
             self.buzzer.duty_u16(0)
             time.sleep(.05)
+
+    def sing_rest(self):
+        self.buzzer.duty_u16(0)
     
     async def sing_async(self, tune, beat, volume):
         for note in tune:
@@ -170,8 +173,8 @@ class Ultrasound():
                 return
 
     async def rainbow(self):
-        maximum = 20
-        minimum = 1
+        maximum = 200
+        minimum = 10
         color = 0
         r = maximum
         g = 0
@@ -201,8 +204,12 @@ class Ultrasound():
                     
             self.pixels.fill((r, g, b))
             self.pixels.write()
-            await asyncio.sleep(.05)
+            await asyncio.sleep(.005)
 
     def clear_neopixel(self):
         self.pixels.fill((0,0,0))
+        self.pixels.write()
+
+    def red(self):
+        self.pixels.fill((255,0,0))
         self.pixels.write()
